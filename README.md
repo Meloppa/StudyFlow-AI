@@ -1,225 +1,99 @@
-# StudyFlow AI
+# 🎓 StudyFlow AI
 
-StudyFlow AI is an autonomous academic assistant that helps students complete assignments more efficiently by analyzing assignment instructions, research papers, and lecture notes.
+**The Intelligent Multi-Agent Study Companion**
 
-Students simply upload their assignment brief, rubric, and supporting documents, and the system automatically:
-
-- Identifies the assignment requirements
-- Breaks the task into manageable steps
-- Finds and summarizes relevant research
-- Generates a structured outline
-- Creates citations and references
-- Suggests presentation content
-
-Using multiple specialized AI agents powered by Gemini, StudyFlow AI transforms complex academic tasks into a clear and organized workflow.
+StudyFlow AI is a high-performance academic tool designed to transform raw documents into professional, research-backed study guides. Built with a three-stage AI pipeline, it automates document analysis, deep-dive research, and high-quality PDF generation.
 
 ---
 
-## 🚀 Elevator Pitch
+## 🚀 Key Features
 
-> Upload your assignment instructions, and StudyFlow AI tells you exactly what to do, what sources to use, and how to structure your work.
-
----
-
-## ❗ Problem Statement
-
-Many students struggle to:
-
-- Understand assignment requirements
-- Identify relevant academic sources
-- Organize research findings
-- Structure reports correctly
-- Format references
-
-These tasks are time-consuming and often lead to confusion and lower-quality submissions.
+* **📄 Smart Ingestion:** Upload any PDF or text-based assignment. Our agent extracts core concepts, deadlines, and requirements instantly.
+* **🔍 Deep-Dive Research:** Powered by **Google Search Grounding**, the Research Agent finds academic sources, verified data, and real-world examples to supplement your material.
+* **✍️ Professional Authoring:** Automatically drafts a structured Study Guide in Markdown, complete with a TL;DR, Action Plan, and Resource Library.
+* **📥 PDF Export:** One-click conversion from AI-generated Markdown to a beautifully styled A4 PDF using **WeasyPrint**.
+* **⚡ 2026 Engine:** Optimized with **Gemini 3.1 Flash-Lite** for sub-second latency and intelligent rate-limit handling.
 
 ---
 
-## 💡 Solution
+## 🛠️ Tech Stack
 
-StudyFlow AI automates the academic workflow by combining document understanding, research summarization, and structured content generation into a single platform.
-
----
-
-## ✨ Core Features
-
-### 📄 Assignment Requirement Extraction
-Automatically extracts:
-- Topic
-- Objectives
-- Deliverables
-- Word count
-- Deadline
-
-### 📊 Rubric Analysis
-Interprets grading rubrics and identifies key scoring criteria.
-
-### 📚 Research Paper Summarization
-Summarizes uploaded journal articles and highlights:
-- Key findings
-- Methodology
-- Limitations
-
-### 📝 Report Outline Generation
-Creates a recommended structure for the assignment.
-
-### 📖 Citation Generator
-Generates references in:
-- APA
-- MLA
-- Harvard
-
-### 📈 Presentation Slide Suggestions
-Converts report content into presentation-ready bullet points.
-
-### 📅 Personalized Study Plan
-Breaks the assignment into manageable tasks with estimated completion times.
+* **Frontend:** [Streamlit](https://streamlit.io/) (Python-based Web UI)
+* **AI Engine:** [Google Gemini 3.1 Flash-Lite](https://ai.google.dev/) (2026 Stable Release)
+* **Document Analysis:** Google GenAI SDK (PDF & Text support)
+* **PDF Engine:** [WeasyPrint](https://weasyprint.org/) & [Markdown](https://python-markdown.github.io/)
+* **Language:** Python 3.10+
 
 ---
 
-## 🤖 Multi-Agent Architecture
+## ⚙️ Project Architecture
 
-StudyFlow AI uses a collaborative multi-agent system:
+StudyFlow uses a **Multi-Agent Orchestration** workflow to ensure data quality:
 
-| Agent | Responsibility |
-|------|------|
-| Requirement Analysis Agent | Extracts assignment instructions and objectives |
-| Research Agent | Summarizes academic papers |
-| Writing Agent | Generates outlines and draft content |
-| Citation Agent | Formats references |
-| Presentation Agent | Creates slide summaries |
-| Planner Agent | Produces a study schedule |
+1. **Ingestor Agent:** Parses the user's uploaded file to define the "Context."
+2. **Researcher Agent:** Uses the Context to perform live web searches for supplementary academic data.
+3. **Writer Agent:** Synthesizes all gathered data into a final, professional study document.
 
 ---
 
-## 🧩 Multimodal Inputs
+## 💻 Installation & Setup
 
-StudyFlow AI supports:
-- PDF documents
-- Images (assignment screenshots)
-- Word documents
-- Plain text notes
+1. **Clone the Repository:**
+```bash
+git clone https://github.com/Meloppa/StudyFlow-AI.git
+cd StudyFlow-AI
 
----
+```
 
-## 📥 Input
 
-Users upload:
-- Assignment brief
-- Rubric
-- Research papers
-- Lecture notes
+2. **Install Dependencies:**
+```bash
+pip install -r requirements.txt
 
-Optional prompt examples:
-- "Help me complete this assignment."
-- "Generate a report outline."
-- "Summarize these articles."
+```
 
----
 
-## ⚙️ Process
+3. **Set Up Environment Variables:**
+Create a `.env` file or export your API key:
+```bash
+export GEMINI_API_KEY="your_api_key_here"
 
-1. Extract assignment requirements.
-2. Analyze grading rubric.
-3. Summarize research papers.
-4. Generate recommended report structure.
-5. Create citations.
-6. Produce a study plan.
-7. Suggest presentation slides.
+```
+
+
+4. **Run the App:**
+```bash
+streamlit run app.py
+
+```
+
+
 
 ---
 
-## 📤 Output
+## 🛡️ Error Handling & Quota Management
 
-StudyFlow AI generates:
-- Assignment breakdown
-- Research summaries
-- Report outline
-- Draft content
-- Reference list
-- Study schedule
-- Presentation bullet points
+StudyFlow AI is designed for the **Gemini Free Tier**. It includes:
+
+* **Intelligent Backoff:** Automatic 60-second cooldowns when 429 (Rate Limit) errors occur.
+* **Model Fallbacks:** Automatically switches between Gemini 3.1 Flash-Lite and Gemini 2.0 Flash to maximize uptime.
+* **Context Truncation:** Ensures large documents don't exceed the 1-million-token input limit.
 
 ---
 
-## 🎯 Target Users
+## 📜 License
 
-- University students
-- Postgraduate researchers
-- Lecturers
-- Academic support centers
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-## 🛠️ Technology Stack
+### 👨‍💻 Developed By
 
-### Frontend
-- React
-- Vite
-- Tailwind CSS
-
-### Backend
-- FastAPI or Node.js
-
-### AI
-- Gemini API
-
-### Document Processing
-- PyMuPDF
-- pdfplumber
-
-### Deployment
-- Vercel
-- Google Cloud Run
+**Meloppa** - *Hackathon 2026 Participant*
 
 ---
 
-## 🏆 Hackathon Track Alignment
+### 💡 Pro-Tip for your Demo:
 
-| Track | How StudyFlow AI Fits |
-|------|------|
-| 🧠 Intelligent Reasoning | Understands assignment requirements and research papers |
-| 🔄 Agentic Workflows | Automates the full academic workflow |
-| 🌍 Enterprise Utility | Valuable for universities and educational institutions |
-| 🧩 Multimodal Intelligence | Processes PDFs, images, and documents |
-| 🤝 Collaborative Systems | Multiple specialized agents work together |
-
----
-
-## 📌 Example Workflow
-
-### Input
-- `assignment_brief.pdf`
-- `rubric.pdf`
-- `journal_article_1.pdf`
-- `journal_article_2.pdf`
-
-### Output
-- Assignment requirements summary
-- Suggested report structure
-- Research summaries
-- APA references
-- Study plan
-- Presentation outline
-
----
-
-## 📝 One-Sentence Summary
-
-StudyFlow AI is a multi-agent academic assistant that analyzes assignment briefs and research materials to generate study plans, summaries, outlines, citations, and draft content.
-
----
-
-## 🔮 Future Enhancements
-
-- Plagiarism detection
-- Grammar checking
-- Real-time collaboration
-- Integration with Google Classroom and Moodle
-- Voice-based tutoring assistant
-
----
-
-## 📄 License
-
-This project is developed for hackathon purposes.
+To make this look even better on GitHub, you can add a screenshot of your app's UI right under the title:
+`![App Screenshot](path/to/your/screenshot.png)`
