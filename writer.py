@@ -16,7 +16,7 @@ def studyflow_writer(context_data):
     Create a professional Markdown Study Guide from this data:
     {safe_context}
     
-    Include a TL;DR, an Action Plan, and a Resource Library.
+    Include a TL;DR, an Action Plan, and a Resource Library. Make it specific and detailed. 
     """
     
     # 3.1-flash-lite is the 2026 "Speed King" for Free Tier
