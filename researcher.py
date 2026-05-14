@@ -1,21 +1,22 @@
 import os
+import time
 from google import genai
 from google.genai import types
 
-# Setup the client using environment variable
+# Setup the client
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 def studyflow_research(topic):
-    print(f"\n🚀 StudyFlow Agent initiating research on: '{topic}'")
+    print(f"\n🚀 StudyFlow Research Agent initiating: '{topic}'")
     
-    # We use 2.0-flash because it's currently more stable than 3.1-lite
-    stable_model = 'gemini-2.0-flash'
+    # Using the 2026 Speed King
+    active_model = 'gemini-3.1-flash-lite'
     
     try:
         # 1. Attempt Live Search Grounding
         response = client.models.generate_content(
-            model=stable_model,
-            contents=f"Perform a deep-dive research into: {topic}. Provide 3 reliable sources and a summary.",
+            model=active_model,
+            contents=f"Perform deep-dive research into: {topic}. Provide 3 reliable sources and a summary.",
             config=types.GenerateContentConfig(
                 tools=[types.Tool(google_search=types.GoogleSearch())]
             )
@@ -23,19 +24,21 @@ def studyflow_research(topic):
         return response.text
 
     except Exception as e:
-        print(f"⚠️ Search tool failed or busy: {e}. Trying fallback strategy...")
+        error_msg = str(e)
+        
+        # Friendly handling for the Free Tier "Speed Ticket"
+        if "429" in error_msg:
+            print("⚠️ Rate limit hit. Guidance: Wait 60s.")
+            return "⏳ **Search Limit Reached.** The Google Search tool is cooling down. Please wait about 60 seconds and click 'Run Research Agent' again to get your sources!"
+            
+        print(f"⚠️ Search tool error: {error_msg}. Trying fallback...")
         
         try:
-            # 2. Fallback: Use internal knowledge if the Search Tool is down
+            # 2. Fallback: Use Internal Knowledge if Search is down/busy
             fallback = client.models.generate_content(
-                model=stable_model,
-                contents=f"I am unable to access the live web right now. Based on your topic '{topic}', suggest a research strategy, 3 key academic databases, and 3 specific search strings to use."
+                model=active_model,
+                contents=f"I can't access live search right now. Based on your knowledge, suggest a research strategy for: {topic}."
             )
             return fallback.text
         except Exception as e2:
-            # 3. Final Error Catch
-            return f"❌ Research Agent is currently unavailable. Error: {str(e2)}"
-
-if __name__ == "__main__":
-    # Test block
-    print(studyflow_research("AI in supply chain 2026"))
+            return f"❌ Research Agent is currently unavailable: {str(e2)}"
