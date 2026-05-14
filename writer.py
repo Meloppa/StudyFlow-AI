@@ -1,23 +1,17 @@
-from google import genai
 import os
+import markdown
+from weasyprint import HTML
+from google import genai
 
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 def studyflow_writer(context_data):
-    print("\n✍️ Agent is drafting your Final Study Guide...")
+    print("\n✍️ Drafting your Final PDF Study Guide...")
     
     prompt = f"""
     You are the StudyFlow Content Creator. 
-    Take the following raw data from our research and ingestion phase:
-    
-    {context_data}
-    
-    Create a beautifully formatted Markdown Study Guide. Include:
-    1. A 'TL;DR' Executive Summary.
-    2. A structured 'Action Plan' with checkboxes.
-    3. A 'Resource Library' section with the research links provided.
-    
-    Use a professional, encouraging tone for a university student.
+    Create a beautifully formatted Study Guide from this data: {context_data}
+    Use Heading 1 for the title, Heading 2 for sections, and bullet points.
     """
     
     response = client.models.generate_content(
@@ -25,21 +19,32 @@ def studyflow_writer(context_data):
         contents=prompt
     )
     
-    # Save it to a file as a physical backup
-    with open("StudyPlan.md", "w", encoding="utf-8") as f:
-        f.write(response.text)
+    md_text = response.text
     
-    print("\n✅ Process Complete. Study Guide generated.")
+    # 1. Convert Markdown to HTML
+    html_content = markdown.markdown(md_text)
     
-    # IMPORTANT: Return the text so the UI can show it!
-    return response.text
+    # 2. Add some professional CSS Styling
+    styled_html = f"""
+    <html>
+    <head>
+        <style>
+            @page {{ size: A4; margin: 20mm; }}
+            body {{ font-family: 'Helvetica', sans-serif; line-height: 1.6; color: #333; }}
+            h1 {{ color: #1a73e8; border-bottom: 2px solid #1a73e8; }}
+            h2 {{ color: #0d47a1; margin-top: 20px; }}
+            li {{ margin-bottom: 10px; }}
+        </style>
+    </head>
+    <body>{html_content}</body>
+    </html>
+    """
+    
+    # 3. Save as PDF
+    HTML(string=styled_html).write_pdf("StudyPlan.pdf")
+    
+    print("✅ PDF generated: StudyPlan.pdf")
+    return md_text # Still return text so the UI can display it too
 
 if __name__ == "__main__":
-    # Instead of dummy data, we'll let you type a quick summary to test it
-    print("🎓 StudyFlow Writer Test Mode")
-    user_input = input("Enter some raw notes to turn into a guide: ")
-    
-    if user_input.strip():
-        result = studyflow_writer(user_input)
-        print("\n--- GENERATED GUIDE ---")
-        print(result)
+    studyflow_writer("Test data for PDF generation.")

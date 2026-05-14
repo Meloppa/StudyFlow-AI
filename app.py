@@ -44,19 +44,13 @@ if 'analysis' in st.session_state:
 
 # 3. Final Output Section
 if 'research' in st.session_state:
-    st.write("---")
-    st.write("### 3. Generate Final Study Guide")
     if st.button("✍️ Draft My Guide"):
-        with st.spinner("Writing professional study guide..."):
-            context = f"ANALYSIS: {st.session_state['analysis']}\nRESEARCH: {st.session_state['research']}"
-            # Modify writer to return the text!
-            final_guide = writer.studyflow_writer(context) 
-            st.markdown(final_guide)
-            
-            # Download Button
+        # ... (your existing code to get final_guide) ...
+        
+        with open("StudyPlan.pdf", "rb") as pdf_file:
             st.download_button(
-                label="📥 Download Study Plan (.md)",
-                data=final_guide,
-                file_name="StudyPlan.md",
-                mime="text/markdown"
+                label="📥 Download Study Plan (PDF)",
+                data=pdf_file,
+                file_name="StudyPlan.pdf",
+                mime="application/pdf"
             )
