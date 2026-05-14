@@ -21,14 +21,14 @@ if uploaded_file:
     
     if st.button("🔍 Analyze Document"):
         with st.spinner("Analyzing document with Gemini 3.1..."):
-            analysis = ingestor.studyflow_ingest_auto() 
-            st.session_state['analysis'] = analysis 
+            research_results = ingestor.studyflow_ingest_auto() 
+            st.session_state['research'] = research_results
 
 # Persistent display of Analysis
-if 'analysis' in st.session_state:
+if 'research' in st.session_state:
     st.info("✅ Document Analyzed")
     with st.expander("See Assignment Summary", expanded=True):
-        st.markdown(st.session_state['analysis'])
+        st.markdown(st.session_state['research'])
 
 # # --- 2. RESEARCH SECTION ---
 # if 'analysis' in st.session_state:
