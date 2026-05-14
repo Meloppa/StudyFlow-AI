@@ -81,19 +81,6 @@ StudyFlow AI is designed for the **Gemini Free Tier**. It includes:
 
 ---
 
-## 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
 ### 👨‍💻 Developed By
 
 **Meloppa** - *Hackathon 2026 Participant*
-
----
-
-### 💡 Pro-Tip for your Demo:
-
-To make this look even better on GitHub, you can add a screenshot of your app's UI right under the title:
-`![App Screenshot](path/to/your/screenshot.png)`
