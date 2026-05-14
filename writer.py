@@ -9,8 +9,8 @@ import time
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 def studyflow_writer(context_data):
-    # Truncate context to keep it safe for the Free Tier
-    safe_context = context_data[:8000] 
+    # Truncate context to keep it safe for the Free Tier (approx 2.5k words)
+    safe_context = context_data[:10000] 
     
     prompt = f"""
     Create a professional Markdown Study Guide from this data:
@@ -19,42 +19,38 @@ def studyflow_writer(context_data):
     Include a TL;DR, an Action Plan, and a Resource Library.
     """
     
+    # 3.1-flash-lite is the 2026 "Speed King" for Free Tier
+    active_model = 'gemini-3.1-flash-lite'
+    
     try:
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(
+            model=active_model, 
+            contents=prompt
+        )
         md_text = response.text
     except Exception as e:
         if "429" in str(e):
-            print("Rate limit hit. Waiting 5 seconds before fallback...")
-            time.sleep(5)
+            print("Rate limit hit. Waiting 10 seconds for 3.1 quota reset...")
+            time.sleep(10)
             try:
-                response = client.models.generate_content(model='gemini-3.1-flash-lite', contents=prompt)
+                # Retry once more with the same model
+                response = client.models.generate_content(
+                    model=active_model, 
+                    contents=prompt
+                )
                 md_text = response.text
-            except Exception as e2:
-                md_text = f"❌ Quota exceeded: {str(e2)}. Please wait 60 seconds."
+            except:
+                md_text = "❌ Quota exceeded on 3.1 Flash-Lite. Please wait 60 seconds."
         else:
-            # Handle non-429 errors (like 500)
-            md_text = f"❌ AI Error: {str(e)}. Please try again."
+            md_text = f"❌ Error: {str(e)}"
 
     # --- PDF CONVERSION ---
     html_content = markdown.markdown(md_text)
-    styled_html = f"""
-    <html>
-    <head>
-        <style>
-            @page {{ size: A4; margin: 20mm; }}
-            body {{ font-family: sans-serif; line-height: 1.6; color: #333; }}
-            h1 {{ color: #1a73e8; }}
-            h2 {{ color: #0d47a1; border-bottom: 1px solid #ddd; }}
-        </style>
-    </head>
-    <body>{html_content}</body>
-    </html>
-    """
+    styled_html = f"<html><body>{html_content}</body></html>"
     
     try:
         pdf_bytes = HTML(string=styled_html).write_pdf()
-    except Exception as pdf_err:
-        print(f"❌ PDF ERROR: {pdf_err}")
+    except:
         pdf_bytes = b"" 
 
     return md_text, pdf_bytes
