@@ -30,27 +30,27 @@ if 'analysis' in st.session_state:
     with st.expander("See Assignment Summary", expanded=True):
         st.markdown(st.session_state['analysis'])
 
-# --- 2. RESEARCH SECTION ---
-if 'analysis' in st.session_state:
-    st.write("---")
-    st.write("### 2. Deep Dive Research")
-    user_topic = st.text_input("What specific topic should I research for you?", placeholder="e.g., Sustainable supply chain trends 2026")
+# # --- 2. RESEARCH SECTION ---
+# if 'analysis' in st.session_state:
+#     st.write("---")
+#     st.write("### 2. Deep Dive Research")
+#     user_topic = st.text_input("What specific topic should I research for you?", placeholder="e.g., Sustainable supply chain trends 2026")
     
-    if st.button("🚀 Run Research Agent"):
-        with st.spinner("Searching the web..."):
-            research_results = researcher.studyflow_research(user_topic)
-            st.session_state['research'] = research_results
+#     if st.button("🚀 Run Research Agent"):
+#         with st.spinner("Searching the web..."):
+#             research_results = researcher.studyflow_research(user_topic)
+#             st.session_state['research'] = research_results
 
-# Persistent display of Research
-if 'research' in st.session_state:
-    st.info("✅ Research Complete")
-    with st.expander("See Research Findings", expanded=True):
-        st.markdown(st.session_state['research'])
+# # Persistent display of Research
+# if 'research' in st.session_state:
+#     st.info("✅ Research Complete")
+#     with st.expander("See Research Findings", expanded=True):
+#         st.markdown(st.session_state['research'])
 
 # --- 3. FINAL OUTPUT SECTION ---
 if 'research' in st.session_state:
     st.write("---")
-    st.write("### 3. Generate Final Study Guide")
+    st.write("### 2. Generate Final Study Guide")
     
     if st.button("✍️ Draft My Guide"):
         with st.spinner("Writing and converting to PDF..."):
