@@ -1,6 +1,5 @@
 import streamlit as st
 import ingestor
-import researcher
 import writer
 import os
 
@@ -28,6 +27,11 @@ st.markdown("""
         font-weight: bold;
         border: none;
         padding: 0.5rem;
+        transition: 0.3s;
+    }
+    div.stButton > button:hover {
+        background-color: #0d47a1;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .stExpander {
         background: rgba(255, 255, 255, 0.5);
@@ -42,56 +46,34 @@ st.markdown("<p style='text-align: center; color: #4B5563;'>Your Intelligent Aca
 st.write("---")
 
 # --- 1. FILE UPLOAD SECTION ---
-st.write("### 1. Upload Assignment")
+st.write("### 📄 1. Upload Assignment")
 uploaded_file = st.file_uploader("Choose a PDF or Image", type=['pdf', 'png', 'jpg', 'jpeg'])
 
 if uploaded_file:
-    # Save locally for the Ingestor agent to find it
+    # Save locally for the Ingestor agent
     with open(uploaded_file.name, "wb") as f:
         f.write(uploaded_file.getbuffer())
     
     if st.button("🔍 Analyze Document"):
         with st.spinner("Analyzing document with Gemini 3.1..."):
-            research_results = ingestor.studyflow_ingest_auto() 
-            st.session_state['research'] = research_results
+            analysis_results = ingestor.studyflow_ingest_auto() 
+            st.session_state['analysis'] = analysis_results
 
 # Persistent display of Analysis
-if 'research' in st.session_state:
-    st.info("✅ Document Analyzed")
+if 'analysis' in st.session_state:
+    st.success("✅ Document Analyzed")
     with st.expander("See Assignment Summary", expanded=True):
-        st.markdown(st.session_state['research'])
+        st.markdown(st.session_state['analysis'])
 
-# # --- 2. RESEARCH SECTION ---
-# if 'analysis' in st.session_state:
-#     st.write("---")
-#     st.write("### 2. Deep Dive Research")
-#     user_topic = st.text_input("What specific topic should I research for you?", placeholder="e.g., Sustainable supply chain trends 2026")
-    
-#     if st.button("🚀 Run Research Agent"):
-#         with st.spinner("Searching the web..."):
-#             research_results = researcher.studyflow_research(user_topic)
-#             st.session_state['research'] = research_results
-
-# # Persistent display of Research
-# if 'research' in st.session_state:
-#     st.info("✅ Research Complete")
-#     with st.expander("See Research Findings", expanded=True):
-#         st.markdown(st.session_state['research'])
-
-# --- 3. FINAL OUTPUT SECTION ---
-if 'research' in st.session_state:
+    # --- 2. FINAL OUTPUT SECTION (Directly after Analysis) ---
     st.write("---")
-    st.write("### 2. Generate Final Study Guide")
+    st.write("### ✍️ 2. Generate Final Study Guide")
     
-    if st.button("✍️ Draft My Guide"):
+    if st.button("🪄 Draft My Guide"):
         with st.spinner("Writing and converting to PDF..."):
-            # Only take the first 4000 characters of each to stay under the TPM limit
-            short_analysis = st.session_state['analysis'][:4000]
-            short_research = st.session_state['research'][:4000]
+            # Use the analysis results as the sole context
+            context = f"ASSIGNMENT SUMMARY: {st.session_state['analysis'][:8000]}"
             
-            context = f"ASSIGNMENT SUMMARY: {short_analysis}\n\nRESEARCH DATA: {short_research}"
-            
-            # Pass the trimmed context
             final_text, final_pdf_bytes = writer.studyflow_writer(context)
             
             st.session_state['final_text'] = final_text
@@ -99,7 +81,8 @@ if 'research' in st.session_state:
 
     # Persistent display of Final Guide & Download
     if 'final_text' in st.session_state:
-        st.success("✨ Your Study Guide is Ready!")
+        st.markdown("---")
+        st.subheader("✨ Your Personalized Study Guide")
         st.markdown(st.session_state['final_text'])
         
         st.download_button(
