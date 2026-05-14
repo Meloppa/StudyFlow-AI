@@ -4,11 +4,42 @@ import researcher
 import writer
 import os
 
-# Page Config
+# 1. PAGE CONFIG & MODERN STYLING
 st.set_page_config(page_title="StudyFlow AI", page_icon="🌊", layout="centered")
 
-st.title("🌊 StudyFlow AI")
-st.subheader("Your Intelligent Academic Orchestrator")
+# Custom CSS for a professional "SaaS" look
+st.markdown("""
+    <style>
+    .stApp {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    .title-text {
+        font-family: 'Inter', sans-serif;
+        color: #1E3A8A;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 0px;
+    }
+    div.stButton > button {
+        background-color: #1a73e8;
+        color: white;
+        border-radius: 10px;
+        width: 100%;
+        font-weight: bold;
+        border: none;
+        padding: 0.5rem;
+    }
+    .stExpander {
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# --- HEADER ---
+st.markdown("<h1 class='title-text'>🌊 StudyFlow AI</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #4B5563;'>Your Intelligent Academic Orchestrator</p>", unsafe_allow_html=True)
+st.write("---")
 
 # --- 1. FILE UPLOAD SECTION ---
 st.write("### 1. Upload Assignment")
