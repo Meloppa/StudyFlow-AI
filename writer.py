@@ -3,6 +3,7 @@ import markdown
 from weasyprint import HTML
 from google import genai
 import io
+import time
 
 # Setup the client
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
@@ -19,25 +20,20 @@ def studyflow_writer(context_data):
     """
     
     try:
-        # 1. Attempt with the standard stable model
-        response = client.models.generate_content(
-            model='gemini-2.0-flash', 
-            contents=prompt
-        )
+        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
         md_text = response.text
     except Exception as e:
-        print(f"⚠️ gemini-2.0-flash failed: {e}. Trying fallback...")
-        try:
-            # 2. NESTED TRY: Attempt with the lite model if the first one fails
-            response = client.models.generate_content(
-                model='gemini-3.1-flash-lite',
-                contents=prompt
-            )
-            md_text = response.text
-        except Exception as e2:
-            # 3. FINAL FAILURE: If both models fail
-            print(f"❌ BOTH MODELS FAILED: {str(e2)}")
-            md_text = f"# Study Guide Error\n\nThe AI hit a limit: {str(e2)}\n\n**Tip:** Please wait 60 seconds and try again."
+        if "429" in str(e):
+            print("Rate limit hit. Waiting 5 seconds before fallback...")
+            time.sleep(5)
+            try:
+                response = client.models.generate_content(model='gemini-3.1-flash-lite', contents=prompt)
+                md_text = response.text
+            except Exception as e2:
+                md_text = f"❌ Quota exceeded: {str(e2)}. Please wait 60 seconds."
+        else:
+            # Handle non-429 errors (like 500)
+            md_text = f"❌ AI Error: {str(e)}. Please try again."
 
     # --- PDF CONVERSION ---
     html_content = markdown.markdown(md_text)

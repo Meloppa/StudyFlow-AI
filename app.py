@@ -54,9 +54,13 @@ if 'research' in st.session_state:
     
     if st.button("✍️ Draft My Guide"):
         with st.spinner("Writing and converting to PDF..."):
-            context = f"ASSIGNMENT: {st.session_state['analysis']}\n\nRESEARCH: {st.session_state['research']}"
+            # Only take the first 4000 characters of each to stay under the TPM limit
+            short_analysis = st.session_state['analysis'][:4000]
+            short_research = st.session_state['research'][:4000]
             
-            # Capture the tuple (text, bytes) from your new writer.py
+            context = f"ASSIGNMENT SUMMARY: {short_analysis}\n\nRESEARCH DATA: {short_research}"
+            
+            # Pass the trimmed context
             final_text, final_pdf_bytes = writer.studyflow_writer(context)
             
             st.session_state['final_text'] = final_text
