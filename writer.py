@@ -2,6 +2,7 @@ import os
 import markdown
 from weasyprint import HTML
 from google import genai
+import io
 
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
@@ -23,6 +24,7 @@ def studyflow_writer(context_data):
     
     # 1. Convert Markdown to HTML
     html_content = markdown.markdown(md_text)
+    styled_html = f"<html><body>{html_content}</body></html>" # simplified for example
     
     # 2. Add some professional CSS Styling
     styled_html = f"""
@@ -41,10 +43,10 @@ def studyflow_writer(context_data):
     """
     
     # 3. Save as PDF
-    HTML(string=styled_html).write_pdf("StudyPlan.pdf")
+    pdf_bytes = HTML(string=styled_html).write_pdf()
     
     print("✅ PDF generated: StudyPlan.pdf")
-    return md_text # Still return text so the UI can display it too
+    return md_text, pdf_bytes # Still return text so the UI can display it too
 
 if __name__ == "__main__":
     studyflow_writer("Test data for PDF generation.")
