@@ -42,7 +42,17 @@ st.markdown("""
 
 # --- HEADER ---
 st.markdown("<h1 class='title-text'>🌊 StudyFlow AI</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #4B5563;'>Your Intelligent Academic Orchestrator</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #1E3A8A; font-weight: 600; font-size: 1.2rem; margin-bottom: 5px;'>Your Intelligent Academic Orchestrator</p>", unsafe_allow_html=True)
+
+# The new description
+st.markdown("""
+    <p style='text-align: center; color: #4B5563; font-size: 1rem; max-width: 600px; margin: 0 auto 20px auto;'>
+        Transform dense assignment briefs into structured study roadmaps. 
+        Analyze requirements, extract key deadlines, and generate a 
+        professional PDF guide in seconds.
+    </p>
+""", unsafe_allow_html=True)
+
 st.write("---")
 
 # --- 1. FILE UPLOAD SECTION ---
