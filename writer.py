@@ -8,36 +8,38 @@ import io
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 def studyflow_writer(context_data):
-    # 1. TRUNCATE CONTEXT (Safety First)
-    # If the context is massive, we take only the most important parts 
-    # to avoid hitting Free Tier "Token" limits.
-    safe_context = context_data[:10000] # Limits to roughly 2,500 words
-    
-    print(f"✍️ Agent is drafting guide... (Context size: {len(safe_context)} chars)")
+    # Truncate context to keep it safe for the Free Tier
+    safe_context = context_data[:8000] 
     
     prompt = f"""
-    Create a professional Markdown Study Guide based on this data:
-    
+    Create a professional Markdown Study Guide from this data:
     {safe_context}
     
-    Include: TL;DR, Action Plan, and Resources. 
-    Use clear headings and bold text.
+    Include a TL;DR, an Action Plan, and a Resource Library.
     """
     
     try:
-        # 2. USE 1.5-FLASH (The most stable workhorse for Free Tier)
+        # 1. Attempt with the standard stable model
         response = client.models.generate_content(
-            model='gemini-1.5-flash', 
+            model='gemini-2.0-flash', 
             contents=prompt
         )
         md_text = response.text
-        
     except Exception as e:
-        # This will print the REAL error in your "Manage App" -> "Logs" in Streamlit
-        print(f"❌ ERROR IN WRITER AGENT: {str(e)}")
-        md_text = f"# Study Guide Error\n\nThe AI hit a limit: {str(e)}\n\n**Tip:** Try researching a smaller/more specific topic."
+        print(f"⚠️ gemini-2.0-flash failed: {e}. Trying fallback...")
+        try:
+            # 2. NESTED TRY: Attempt with the lite model if the first one fails
+            response = client.models.generate_content(
+                model='gemini-3.1-flash-lite',
+                contents=prompt
+            )
+            md_text = response.text
+        except Exception as e2:
+            # 3. FINAL FAILURE: If both models fail
+            print(f"❌ BOTH MODELS FAILED: {str(e2)}")
+            md_text = f"# Study Guide Error\n\nThe AI hit a limit: {str(e2)}\n\n**Tip:** Please wait 60 seconds and try again."
 
-    # 3. CONVERT TO PDF
+    # --- PDF CONVERSION ---
     html_content = markdown.markdown(md_text)
     styled_html = f"""
     <html>
@@ -57,6 +59,6 @@ def studyflow_writer(context_data):
         pdf_bytes = HTML(string=styled_html).write_pdf()
     except Exception as pdf_err:
         print(f"❌ PDF ERROR: {pdf_err}")
-        pdf_bytes = b"" # Return empty bytes if PDF fails
+        pdf_bytes = b"" 
 
     return md_text, pdf_bytes
